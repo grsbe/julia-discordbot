@@ -4,8 +4,15 @@ from interactions import Task, TimeTrigger, IntervalTrigger
 from interactions import check, has_any_role, is_owner
 import os, re, random
 
+import logging
 
-bot = Client(intents= Intents.GUILDS | Intents.MESSAGES | Intents.PRIVILEGED)
+logging.basicConfig()
+cls_log = logging.getLogger("MyLogger")
+cls_log.setLevel(logging.DEBUG)
+
+
+bot = Client(intents= Intents.GUILDS | Intents.MESSAGES | Intents.PRIVILEGED,
+             logger=cls_log)
 # intents are what events we want to receive from discord, `DEFAULT` is usually fine
 # add REACTIONS if necessary at any point
 
@@ -24,7 +31,7 @@ async def on_message_create(event):
 
     if event.message.author.has_role(1166158428054507540):
         await event.message.delete()
-        if random.randint(0,6) == 0:
+        if random.randint(0,3) == 0:
             await event.message.channel.send("<:xdd:1143506212114157569>")
             if random.randint(0,9) == 0:
                 await event.message.author.remove_role(1166158428054507540)
@@ -35,6 +42,9 @@ async def on_message_create(event):
         await event.message.delete()
         await event.message.channel.send("Your free trial of text messages on this server has now been expired. Consider yourself lucky, the chance of this happening was 1 in 1.000.000  <:LUL:706159727523921931>")
         return
+
+    if re.search("[Jj]ulia", event.message.content):
+        await event.message.reply("https://media.discordapp.net/attachments/1014647837516120134/1238589463010213969/image.png?ex=67c4c053&is=67c36ed3&hm=b4bc367101c5c716c6a10c246d06dfa347bf0ec26e2008e1c25b98f399e8a1d3&format=webp&quality=lossless&")
 
     if re.search("[Uu]w[Uu]", event.message.content):
         await event.message.reply("OWO ヾ(≧▽≦*)o")
@@ -71,12 +81,12 @@ async def pm(ctx: SlashContext, pm: str):
     await ctx.send("ok", ephemeral= True)
     await ctx.channel.send(pm)
 
-@slash_command(name="pfchange", description="update the profile pic of julia")
-@check(is_owner())
-async def pf(ctx: SlashContext):
-    print(f"changing pfpic")
-    await bot.user.edit(avatar="2juliachan.gif")
-    print("changed pfpic")
+# @slash_command(name="pfchange", description="update the profile pic of julia")
+# @check(is_owner())
+# async def pf(ctx: SlashContext):
+#     print(f"changing pfpic")
+#     await bot.user.edit(avatar="2juliachan.gif")
+#     print("changed pfpic")
 
 @slash_command(name="pun", description="Tells a pun")
 async def makepun(ctx: SlashContext):
@@ -88,7 +98,7 @@ async def jelp(ctx: SlashContext):
     My current functionality:
     /j -> to display this page
     /uwufy -> uwufies input test
-    /pun -> These are absolutely hillary-ous 
+    /pun -> Sends a pun
     /bday -> save your birthday so that everyone gets a reminder
     /nextbdays -> get a list of all the saved birthdays
     And if you write me a personal message, then I will rizz you up

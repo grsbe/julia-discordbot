@@ -1,9 +1,12 @@
-version: "3.7"
 services:
   juliachan:
     build: .
     # change image name to your own if you want to push to dockerhub
     image: grasberg/juliachan:latest
     container_name: juliachan
+    restart: on-failure:5
+    pull_policy: always
+    environment:
+      - TZ=Europe/Amsterdam
     volumes:
       - ./db:/usr/src/app/db

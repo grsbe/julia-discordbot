@@ -87,23 +87,44 @@ class MyExtension(Extension):
         #await self.bday_channel.send(f"Test message: This channel has been hopefully successfully been selected as the birthday channel.")
         print(f"Set {birthday_channel.name} as birthday channel.")
 
-    @Task.create(TimeTrigger(hour=23, minute=0, seconds=1, utc=False)) 
+    @Task.create(TimeTrigger(hour=0, minute=0, seconds=10, utc=False)) 
     async def check_for_bday(self):
-        #the linux server is in utc, its midnight at 23.00 and thus needs to fetch next day for germany ;-;
-        # i havent thought about an universal solution to this and i dont bother either since it would require to set a timezone of the bot
-        # when setting up the server
-        today_date = date.today() + timedelta(days=1) 
+        # do not forget to set the timezone to germany
+        today_date = date.today()
         today_date = today_date.strftime("%d.%m.")
         print("Checking for birthdays.. today is ", today_date)
         big_if_true = False
         for rows in self.cur.execute(f"""SELECT discord_id, birthday, birthmonth FROM birthdays WHERE birthday = {today_date[0:2]} and birthmonth = {today_date[3:5]}"""):
             bdayuser = await self.bot.fetch_user(rows[0])
             print(f"wishing {bdayuser.mention} happy birthday")
-            await self.bday_channel.send(f"Hey, {bdayuser.display_name} hat heute Geburtstag. Alles Gute in deinem neuen Lebensjahr! <3")
+            await self.bday_channel.send(f"Hey, {bdayuser.mention} hat heute Geburtstag. Alles Gute in deinem neuen Lebensjahr! <3")
             await self.bday_channel.send(random.choice(open("db/bdaygifs.txt",encoding="utf8").read().splitlines()))
             big_if_true = True
         if big_if_true:
-            query = self.get_next_bdays_query_string()
+            query = self.get_next_bdays_query_string(5)
+            res = self.cur.execute(query)
+            string = "Next 5 birthdays:" + "\n"
+            for rows in res:
+                bdayuser = await self.bot.fetch_user(rows[0])
+                string += f'{bdayuser.display_name}: {rows[1]}.{rows[2]}'  + "\n"
+            await self.bday_channel.send(string)
+
+    @slash_command(name="trigger_bday_message", description="Manually triggers checking for birthdays in case Julia is drunk")
+    @check(is_owner())
+    async def check_for_bday_manual(self, ctx: SlashContext):
+        # do not forget to set the timezone to germany
+        today_date = date.today()
+        today_date = today_date.strftime("%d.%m.")
+        print("Checking for birthdays.. today is ", today_date)
+        big_if_true = False
+        for rows in self.cur.execute(f"""SELECT discord_id, birthday, birthmonth FROM birthdays WHERE birthday = {today_date[0:2]} and birthmonth = {today_date[3:5]}"""):
+            bdayuser = await self.bot.fetch_user(rows[0])
+            print(f"wishing {bdayuser.mention} happy birthday")
+            await self.bday_channel.send(f"Hey, {bdayuser.mention} hat heute Geburtstag. Alles Gute in deinem neuen Lebensjahr! <3")
+            await self.bday_channel.send(random.choice(open("db/bdaygifs.txt",encoding="utf8").read().splitlines()))
+            big_if_true = True
+        if big_if_true:
+            query = self.get_next_bdays_query_string(5)
             res = self.cur.execute(query)
             string = "Next 5 birthdays:" + "\n"
             for rows in res:
@@ -143,7 +164,7 @@ class MyExtension(Extension):
         string = "Next upcoming birthdays:" + "\n"
         for rows in res:
             bdayuser = await self.bot.fetch_user(rows[0])
-            string += f'{bdayuser.display_name}: {rows[1]}.{rows[2]}' + "\n"
+            string += f'{bdayuser.mention}: {rows[1]}.{rows[2]}' + "\n"
         await ctx.respond(string, ephemeral=True)
         
 
