@@ -40,7 +40,7 @@ async def on_message_create(event):
     if random.randint(0,1000000) == 0:
         await event.message.author.add_role(1166158428054507540)
         await event.message.delete()
-        await event.message.channel.send("Your free trial of text messages on this server has now been expired. Consider yourself lucky, the chance of this happening was 1 in 1.000.000  <:LUL:706159727523921931>")
+        await event.message.channel.send("Your free trial of text messages on this server has now been expired. Bipetti Bopetti, you are now my property. Consider yourself lucky, the chance of this happening was 1 in 1.000.000  <:LUL:706159727523921931>")
         return
 
     if re.search("[Jj]ulia", event.message.content):
@@ -106,6 +106,7 @@ async def jelp(ctx: SlashContext):
     await ctx.send(string, ephemeral=True)
 
 bot.load_extension("birthdaycog")
+#bot.load_extension("citations")
 
 @listen()  # this decorator tells snek that it needs to listen for the corresponding event, and run this coroutine
 async def on_ready():

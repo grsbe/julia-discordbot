@@ -5,7 +5,7 @@ services:
     image: grasberg/juliachan:latest
     container_name: juliachan
     restart: on-failure:5
-    pull_policy: always
+    #pull_policy: always
     environment:
       - TZ=Europe/Amsterdam
     volumes:

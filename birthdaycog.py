@@ -7,7 +7,7 @@ from interactions import check, has_any_role, is_owner
 import re, random
 from datetime import date, timedelta
 
-class MyExtension(Extension):
+class Birthdays(Extension):
     def __init__(self, bot):
         # do some initialization here
 
@@ -131,6 +131,8 @@ class MyExtension(Extension):
                 bdayuser = await self.bot.fetch_user(rows[0])
                 string += f'{bdayuser.display_name}: {rows[1]}.{rows[2]}'  + "\n"
             await self.bday_channel.send(string)
+        await self.bday_channel.send("Test message pls ignore2")
+        await ctx.respond("Done", ephemeral=True)
 
     # getting next bdays stuff
     def get_next_bdays_query_string(self, n = None):
@@ -170,4 +172,5 @@ class MyExtension(Extension):
 
     async def async_start(self):
         self.check_for_bday.start()
+        self.bday_channel = await self.bot.fetch_channel(1167886895439683735)
         print("started bday tasks")
