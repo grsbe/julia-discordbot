@@ -131,7 +131,7 @@ class Birthdays(Extension):
                 bdayuser = await self.bot.fetch_user(rows[0])
                 string += f'{bdayuser.display_name}: {rows[1]}.{rows[2]}'  + "\n"
             await self.bday_channel.send(string)
-        await self.bday_channel.send("Test message pls ignore2")
+        #await self.bday_channel.send("Test message pls ignore2")
         await ctx.respond("Done", ephemeral=True)
 
     # getting next bdays stuff
